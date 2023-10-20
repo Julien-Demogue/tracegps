@@ -27,7 +27,7 @@
 
 <?php
 // connexion du serveur web à la base MySQL
-include_once ('DAO.class.php');
+include_once ('DAO.php');
 $dao = new DAO();
 
 
