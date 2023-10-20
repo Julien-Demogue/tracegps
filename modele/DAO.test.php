@@ -1,4 +1,5 @@
 <?php
+namespace modele;
 // Projet TraceGPS
 // fichier : modele/DAO.test.php
 // Rôle : test de la classe DAO.class.php

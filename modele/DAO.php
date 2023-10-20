@@ -1,7 +1,8 @@
 <?php
+namespace modele;
 // Projet TraceGPS
-// fichier : modele/DAO.class.php   (DAO : Data Access Object)
-// Rôle : fournit des méthodes d'accès à la bdd tracegps (projet TraceGPS) au moyen de l'objet PDO
+// fichier : modele/DAO.php   (DAO : Data Access Object)
+// Rôle : fournit des méthodes d'accès à la bdd tracegps (projet TraceGPS) au moyen de l'objet \PDO
 // modifié par dP le 12/8/2021
 
 // liste des méthodes déjà développées (dans l'ordre d'apparition dans le fichier) :
@@ -37,11 +38,11 @@
 
 
 // certaines méthodes nécessitent les classes suivantes :
-include_once ('Utilisateur.class.php');
-include_once ('Trace.class.php');
-include_once ('PointDeTrace.class.php');
-include_once ('Point.class.php');
-include_once ('Outils.class.php');
+include_once ('Utilisateur.php');
+include_once ('Trace.php');
+include_once ('PointDeTrace.php');
+include_once ('Point.php');
+include_once ('Outils.php');
 
 // inclusion des paramètres de l'application
 include_once ('parametres.php');
@@ -61,12 +62,12 @@ class DAO
     public function __construct() {
         global $PARAM_HOTE, $PARAM_PORT, $PARAM_BDD, $PARAM_USER, $PARAM_PWD;
         try
-        {	$this->cnx = new PDO ("mysql:host=" . $PARAM_HOTE . ";port=" . $PARAM_PORT . ";dbname=" . $PARAM_BDD,
+        {	$this->cnx = new \PDO ("mysql:host=" . $PARAM_HOTE . ";port=" . $PARAM_PORT . ";dbname=" . $PARAM_BDD,
             $PARAM_USER,
             $PARAM_PWD);
         return true;
         }
-        catch (Exception $ex)
+        catch (\Exception $ex)
         {	echo ("Echec de la connexion a la base de donnees <br>");
         echo ("Erreur numero : " . $ex->getCode() . "<br />" . "Description : " . $ex->getMessage() . "<br>");
         echo ("PARAM_HOTE = " . $PARAM_HOTE);
@@ -96,11 +97,11 @@ class DAO
         $txt_req .= " and mdpSha1 = :mdpSha1";
         $req = $this->cnx->prepare($txt_req);
         // liaison de la requête et de ses paramètres
-        $req->bindValue("pseudo", $pseudo, PDO::PARAM_STR);
-        $req->bindValue("mdpSha1", $mdpSha1, PDO::PARAM_STR);
+        $req->bindValue("pseudo", $pseudo, \PDO::PARAM_STR);
+        $req->bindValue("mdpSha1", $mdpSha1, \PDO::PARAM_STR);
         // extraction des données
         $req->execute();
-        $uneLigne = $req->fetch(PDO::FETCH_OBJ);
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
         // traitement de la réponse
         $reponse = 0;
         if ($uneLigne) {
@@ -120,7 +121,7 @@ class DAO
         $txt_req = "Select count(*) from tracegps_utilisateurs where pseudo = :pseudo";
         $req = $this->cnx->prepare($txt_req);
         // liaison de la requête et de ses paramètres
-        $req->bindValue("pseudo", $pseudo, PDO::PARAM_STR);
+        $req->bindValue("pseudo", $pseudo, \PDO::PARAM_STR);
         // exécution de la requête
         $req->execute();
         $nbReponses = $req->fetchColumn(0);
@@ -147,10 +148,10 @@ class DAO
         $txt_req .= " where pseudo = :pseudo";
         $req = $this->cnx->prepare($txt_req);
         // liaison de la requête et de ses paramètres
-        $req->bindValue("pseudo", $pseudo, PDO::PARAM_STR);
+        $req->bindValue("pseudo", $pseudo, \PDO::PARAM_STR);
         // extraction des données
         $req->execute();
-        $uneLigne = $req->fetch(PDO::FETCH_OBJ);
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
         // libère les ressources du jeu de données
         $req->closeCursor();
         
@@ -189,7 +190,7 @@ class DAO
         $req = $this->cnx->prepare($txt_req);
         // extraction des données
         $req->execute();
-        $uneLigne = $req->fetch(PDO::FETCH_OBJ);
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
         
         // construction d'une collection d'objets Utilisateur
         $lesUtilisateurs = array();
@@ -210,7 +211,7 @@ class DAO
             // ajout de l'utilisateur à la collection
             $lesUtilisateurs[] = $unUtilisateur;
             // extrait la ligne suivante
-            $uneLigne = $req->fetch(PDO::FETCH_OBJ);
+            $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
         }
         // libère les ressources du jeu de données
         $req->closeCursor();
@@ -232,12 +233,12 @@ class DAO
         $txt_req1 .= " values (:pseudo, :mdpSha1, :adrMail, :numTel, :niveau, :dateCreation)";
         $req1 = $this->cnx->prepare($txt_req1);
         // liaison de la requête et de ses paramètres
-        $req1->bindValue("pseudo", utf8_decode($unUtilisateur->getPseudo()), PDO::PARAM_STR);
-        $req1->bindValue("mdpSha1", utf8_decode(sha1($unUtilisateur->getMdpsha1())), PDO::PARAM_STR);
-        $req1->bindValue("adrMail", utf8_decode($unUtilisateur->getAdrmail()), PDO::PARAM_STR);
-        $req1->bindValue("numTel", utf8_decode($unUtilisateur->getNumTel()), PDO::PARAM_STR);
-        $req1->bindValue("niveau", utf8_decode($unUtilisateur->getNiveau()), PDO::PARAM_INT);
-        $req1->bindValue("dateCreation", utf8_decode($unUtilisateur->getDateCreation()), PDO::PARAM_STR);
+        $req1->bindValue("pseudo", utf8_decode($unUtilisateur->getPseudo()), \PDO::PARAM_STR);
+        $req1->bindValue("mdpSha1", utf8_decode(sha1($unUtilisateur->getMdpsha1())), \PDO::PARAM_STR);
+        $req1->bindValue("adrMail", utf8_decode($unUtilisateur->getAdrmail()), \PDO::PARAM_STR);
+        $req1->bindValue("numTel", utf8_decode($unUtilisateur->getNumTel()), \PDO::PARAM_STR);
+        $req1->bindValue("niveau", utf8_decode($unUtilisateur->getNiveau()), \PDO::PARAM_INT);
+        $req1->bindValue("dateCreation", utf8_decode($unUtilisateur->getDateCreation()), \PDO::PARAM_STR);
         // exécution de la requête
         $ok = $req1->execute();
         // sortir en cas d'échec
@@ -259,8 +260,8 @@ class DAO
         $txt_req .= " where pseudo = :pseudo";
         $req = $this->cnx->prepare($txt_req);
         // liaison de la requête et de ses paramètres
-        $req->bindValue("nouveauMdp", sha1($nouveauMdp), PDO::PARAM_STR);
-        $req->bindValue("pseudo", $pseudo, PDO::PARAM_STR);
+        $req->bindValue("nouveauMdp", sha1($nouveauMdp), \PDO::PARAM_STR);
+        $req->bindValue("pseudo", $pseudo, \PDO::PARAM_STR);
         // exécution de la requête
         $ok = $req->execute();
         return $ok;
@@ -291,7 +292,7 @@ class DAO
             $txt_req1 .= " where idAutorisant = :idUtilisateur or idAutorise = :idUtilisateur";
             $req1 = $this->cnx->prepare($txt_req1);
             // liaison de la requête et de ses paramètres
-            $req1->bindValue("idUtilisateur", utf8_decode($idUtilisateur), PDO::PARAM_INT);
+            $req1->bindValue("idUtilisateur", utf8_decode($idUtilisateur), \PDO::PARAM_INT);
             // exécution de la requête
             $ok = $req1->execute();
             
@@ -300,7 +301,7 @@ class DAO
             $txt_req2 .= " where pseudo = :pseudo";
             $req2 = $this->cnx->prepare($txt_req2);
             // liaison de la requête et de ses paramètres
-            $req2->bindValue("pseudo", utf8_decode($pseudo), PDO::PARAM_STR);
+            $req2->bindValue("pseudo", utf8_decode($pseudo), \PDO::PARAM_STR);
             // exécution de la requête
             $ok = $req2->execute();
             return $ok;
