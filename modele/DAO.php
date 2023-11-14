@@ -551,7 +551,42 @@ class DAO
     // début de la zone attribuée au développeur 2 (jean) : lignes 550 à 749
     // --------------------------------------------------------------------------------------
     
-
+    function getLesPointsDeTrace($idTrace) {
+        
+        $lesPoints = array();
+        
+        $txt_req = "SELECT idTrace, id, latitude,longitude,altitude,dateHeure,rythmeCardio FROM tracegps_points";
+        $txt_req .= " where idTrace = :id";
+        $req = $this->cnx->prepare($txt_req);
+        $req -> bindvalue ('id',$idTrace,\PDO::PARAM_STR);
+        // extraction des données
+        $req->execute();
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        
+        
+        
+        // libère les ressources du jeu de données
+        
+        while ($uneLigne) {
+            $unIdTrace = ($uneLigne->idTrace);
+            $unId = ($uneLigne->id);
+            $uneLatitude =  ($uneLigne->latitude);
+            $uneLongitude =  ($uneLigne->longitude);
+            $uneAltitude = ($uneLigne->altitude);
+            $unedateHeure = ($uneLigne->dateHeure);
+            $unRythmeCardio = ($uneLigne->rythmeCardio);
+            $unTempsCumule = 0;
+            $uneDistanceCumulee = 0;
+            $uneVitesse = 0;
+            
+            $unPoint = new PointDeTrace ($unIdTrace,$unId,$uneLatitude,$uneLongitude,$uneAltitude,$unedateHeure,$unRythmeCardio,$unTempsCumule,$uneDistanceCumulee,$uneVitesse);
+            
+            $lesPoints[] = $unPoint;
+            $uneLigne = $req->fetch(\PDO::FETCH_OBJ);}
+            // fourniture de la collection
+            $req->closeCursor();
+            return $lesPoints;
+    }
     
     
     
@@ -712,42 +747,7 @@ class DAO
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------
     // début de la zone attribuée au développeur 3 (noe) : lignes 750 à 949
     // --------------------------------------------------------------------------------------
     
