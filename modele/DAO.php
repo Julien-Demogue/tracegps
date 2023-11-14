@@ -1,7 +1,9 @@
 <?php
 namespace modele;
+
+use Exception;
 // Projet TraceGPS
-// fichier : modele/DAO.php   (DAO : Data Access Object)
+// fichier : modele/DAO.class.php   (DAO : Data Access Object)
 // Rôle : fournit des méthodes d'accès à la bdd tracegps (projet TraceGPS) au moyen de l'objet \PDO
 // modifié par dP le 12/8/2021
 
@@ -62,12 +64,12 @@ class DAO
     public function __construct() {
         global $PARAM_HOTE, $PARAM_PORT, $PARAM_BDD, $PARAM_USER, $PARAM_PWD;
         try
-        {	$this->cnx = new \PDO ("mysql:host=" . $PARAM_HOTE . ";port=" . $PARAM_PORT . ";dbname=" . $PARAM_BDD,
+        {	$this->cnx = new \PDO("mysql:host=" . $PARAM_HOTE . ";port=" . $PARAM_PORT . ";dbname=" . $PARAM_BDD,
             $PARAM_USER,
             $PARAM_PWD);
         return true;
         }
-        catch (\Exception $ex)
+        catch (Exception $ex)
         {	echo ("Echec de la connexion a la base de donnees <br>");
         echo ("Erreur numero : " . $ex->getCode() . "<br />" . "Description : " . $ex->getMessage() . "<br>");
         echo ("PARAM_HOTE = " . $PARAM_HOTE);
@@ -105,7 +107,7 @@ class DAO
         // traitement de la réponse
         $reponse = 0;
         if ($uneLigne) {
-        	$reponse = $uneLigne->niveau;
+            $reponse = $uneLigne->niveau;
         }
         // libère les ressources du jeu de données
         $req->closeCursor();
@@ -161,16 +163,19 @@ class DAO
         }
         else {
             // création d'un objet Utilisateur
-            $unId = utf8_encode($uneLigne->id);
-            $unPseudo = utf8_encode($uneLigne->pseudo);
-            $unMdpSha1 = utf8_encode($uneLigne->mdpSha1);
-            $uneAdrMail = utf8_encode($uneLigne->adrMail);
-            $unNumTel = utf8_encode($uneLigne->numTel);
-            $unNiveau = utf8_encode($uneLigne->niveau);
-            $uneDateCreation = utf8_encode($uneLigne->dateCreation);
-            $unNbTraces = utf8_encode($uneLigne->nbTraces);
-            $uneDateDerniereTrace = utf8_encode($uneLigne->dateDerniereTrace);
-            
+            $unId = mb_convert_encoding($uneLigne->id, "UTF-8");
+            $unPseudo = mb_convert_encoding($uneLigne->pseudo, "UTF-8");
+            $unMdpSha1 = mb_convert_encoding($uneLigne->mdpSha1, "UTF-8");
+            $uneAdrMail = mb_convert_encoding($uneLigne->adrMail, "UTF-8");
+            $unNumTel = mb_convert_encoding($uneLigne->numTel, "UTF-8");
+            $unNiveau = mb_convert_encoding($uneLigne->niveau, "UTF-8");
+            $uneDateCreation = mb_convert_encoding($uneLigne->dateCreation, "UTF-8");
+            $unNbTraces = mb_convert_encoding($uneLigne->nbTraces, "UTF-8");
+            if (isset($uneLigne->dateDerniereTrace)) {
+                $uneDateDerniereTrace = mb_convert_encoding($uneLigne->dateDerniereTrace, "UTF-8");
+            } else {
+                $uneDateDerniereTrace ="";
+            }
             $unUtilisateur = new Utilisateur($unId, $unPseudo, $unMdpSha1, $uneAdrMail, $unNumTel, $unNiveau, $uneDateCreation, $unNbTraces, $uneDateDerniereTrace);
             return $unUtilisateur;
         }
@@ -197,15 +202,19 @@ class DAO
         // tant qu'une ligne est trouvée :
         while ($uneLigne) {
             // création d'un objet Utilisateur
-            $unId = utf8_encode($uneLigne->id);
-            $unPseudo = utf8_encode($uneLigne->pseudo);
-            $unMdpSha1 = utf8_encode($uneLigne->mdpSha1);
-            $uneAdrMail = utf8_encode($uneLigne->adrMail);
-            $unNumTel = utf8_encode($uneLigne->numTel);
-            $unNiveau = utf8_encode($uneLigne->niveau);
-            $uneDateCreation = utf8_encode($uneLigne->dateCreation);
-            $unNbTraces = utf8_encode($uneLigne->nbTraces);
-            $uneDateDerniereTrace = utf8_encode($uneLigne->dateDerniereTrace);
+            $unId = mb_convert_encoding($uneLigne->id, "UTF-8");
+            $unPseudo = mb_convert_encoding($uneLigne->pseudo, "UTF-8");
+            $unMdpSha1 = mb_convert_encoding($uneLigne->mdpSha1, "UTF-8");
+            $uneAdrMail = mb_convert_encoding($uneLigne->adrMail, "UTF-8");
+            $unNumTel = mb_convert_encoding($uneLigne->numTel, "UTF-8");
+            $unNiveau = mb_convert_encoding($uneLigne->niveau, "UTF-8");
+            $uneDateCreation = mb_convert_encoding($uneLigne->dateCreation, "UTF-8");
+            $unNbTraces = mb_convert_encoding($uneLigne->nbTraces, "UTF-8");
+            if (isset($uneLigne->dateDerniereTrace)) {
+                $uneDateDerniereTrace = mb_convert_encoding($uneLigne->dateDerniereTrace, "UTF-8");
+            } else {
+                $uneDateDerniereTrace ="";
+            }
             
             $unUtilisateur = new Utilisateur($unId, $unPseudo, $unMdpSha1, $uneAdrMail, $unNumTel, $unNiveau, $uneDateCreation, $unNbTraces, $uneDateDerniereTrace);
             // ajout de l'utilisateur à la collection
@@ -218,7 +227,7 @@ class DAO
         // fourniture de la collection
         return $lesUtilisateurs;
     }
-
+    
     
     // enregistre l'utilisateur $unUtilisateur dans la bdd
     // fournit true si l'enregistrement s'est bien effectué, false sinon
@@ -233,12 +242,12 @@ class DAO
         $txt_req1 .= " values (:pseudo, :mdpSha1, :adrMail, :numTel, :niveau, :dateCreation)";
         $req1 = $this->cnx->prepare($txt_req1);
         // liaison de la requête et de ses paramètres
-        $req1->bindValue("pseudo", utf8_decode($unUtilisateur->getPseudo()), \PDO::PARAM_STR);
-        $req1->bindValue("mdpSha1", utf8_decode(sha1($unUtilisateur->getMdpsha1())), \PDO::PARAM_STR);
-        $req1->bindValue("adrMail", utf8_decode($unUtilisateur->getAdrmail()), \PDO::PARAM_STR);
-        $req1->bindValue("numTel", utf8_decode($unUtilisateur->getNumTel()), \PDO::PARAM_STR);
-        $req1->bindValue("niveau", utf8_decode($unUtilisateur->getNiveau()), \PDO::PARAM_INT);
-        $req1->bindValue("dateCreation", utf8_decode($unUtilisateur->getDateCreation()), \PDO::PARAM_STR);
+        $req1->bindValue("pseudo", mb_convert_encoding($unUtilisateur->getPseudo(), "UTF-8"), \PDO::PARAM_STR);
+        $req1->bindValue("mdpSha1", mb_convert_encoding(sha1($unUtilisateur->getMdpsha1(), "UTF-8"), "UTF-8"), \PDO::PARAM_STR);
+        $req1->bindValue("adrMail", mb_convert_encoding($unUtilisateur->getAdrmail(), "UTF-8"), \PDO::PARAM_STR);
+        $req1->bindValue("numTel", mb_convert_encoding($unUtilisateur->getNumTel(), "UTF-8"), \PDO::PARAM_STR);
+        $req1->bindValue("niveau", mb_convert_encoding($unUtilisateur->getNiveau(), "UTF-8"), \PDO::PARAM_INT);
+        $req1->bindValue("dateCreation", mb_convert_encoding($unUtilisateur->getDateCreation(), "UTF-8"), \PDO::PARAM_STR);
         // exécution de la requête
         $ok = $req1->execute();
         // sortir en cas d'échec
@@ -282,17 +291,17 @@ class DAO
             // suppression des traces de l'utilisateur (et des points correspondants)
             $lesTraces = $this->getLesTraces($idUtilisateur);
             if($lesTraces != null)
-			{
-				foreach ($lesTraces as $uneTrace) {
-					$this->supprimerUneTrace($uneTrace->getId());
-				}
+            {
+                foreach ($lesTraces as $uneTrace) {
+                    $this->supprimerUneTrace($uneTrace->getId());
+                }
             }
             // préparation de la requête de suppression des autorisations
             $txt_req1 = "delete from tracegps_autorisations" ;
             $txt_req1 .= " where idAutorisant = :idUtilisateur or idAutorise = :idUtilisateur";
             $req1 = $this->cnx->prepare($txt_req1);
             // liaison de la requête et de ses paramètres
-            $req1->bindValue("idUtilisateur", utf8_decode($idUtilisateur), \PDO::PARAM_INT);
+            $req1->bindValue("idUtilisateur", mb_convert_encoding($idUtilisateur, "UTF-8"), \PDO::PARAM_INT);
             // exécution de la requête
             $ok = $req1->execute();
             
@@ -301,7 +310,7 @@ class DAO
             $txt_req2 .= " where pseudo = :pseudo";
             $req2 = $this->cnx->prepare($txt_req2);
             // liaison de la requête et de ses paramètres
-            $req2->bindValue("pseudo", utf8_decode($pseudo), \PDO::PARAM_STR);
+            $req2->bindValue("pseudo", mb_convert_encoding($pseudo, "UTF-8"), \PDO::PARAM_STR);
             // exécution de la requête
             $ok = $req2->execute();
             return $ok;
@@ -329,7 +338,6 @@ class DAO
         return $ok;
     }
     
-    
     // Le code restant à développer va être réparti entre les membres de l'équipe de développement.
     // Afin de limiter les conflits avec GitHub, il est décidé d'attribuer une zone de ce fichier à chaque développeur.
     // Développeur 1 : lignes 350 à 549
@@ -347,7 +355,255 @@ class DAO
     
     
     // --------------------------------------------------------------------------------------
-    // début de la zone attribuée au développeur 1 (xxxxxxxxxxxxxxxxxxxx) : lignes 350 à 549
+    // début de la zone attribuée au développeur 1 (eric) : lignes 350 à 549
+    // --------------------------------------------------------------------------------------
+    
+    public function getUneTrace($idTrace)
+    {
+        // préparation de la requête de recherche
+        $txt_req = "Select id";
+        $txt_req .= " from tracegps_vue_traces";
+        $txt_req .= " where id = :id";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("id", $idTrace, \PDO::PARAM_STR);
+        // extraction des données
+        $req->execute();
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        // libère les ressources du jeu de données
+        $req->closeCursor();
+        
+        
+        if($idTrace==$uneLigne->id){
+            $desPointDeTrace=array();
+            $desPointDeTrace[] = new PointDeTrace(1, 1, 48.500, -1.600, 50, "2017-12-11 14:00:00", 80, 0, 0, 0);
+            $desPointDeTrace[] = new PointDeTrace(1, 1, 48.600, -1.700, 50, "2017-12-11 14:03:00", 80, 0, 0, 0);//getLesPointsDeTrace($idTrace);
+            // préparation de la requête de recherche
+            $txt_req = "Select dateDebut, dateFin, terminee, idUtilisateur";
+            $txt_req .= " from tracegps_vue_traces";
+            $txt_req .= " where id = :id";
+            $req = $this->cnx->prepare($txt_req);
+            // liaison de la requête et de ses paramètres
+            $req->bindValue("id", $idTrace, \PDO::PARAM_STR);
+            // extraction des données
+            $req->execute();
+            $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+            // libère les ressources du jeu de données
+            $req->closeCursor();
+            
+            
+            $uneDateHeureDebut=$uneLigne->dateDebut;
+            $uneDateHeureFin=$uneLigne->dateFin;
+            $estTerminee=$uneLigne->terminee;
+            if ($estTerminee==1){$terminee=true;}else{$terminee=false;}
+            $unIdUtilisateur=$uneLigne->idUtilisateur;
+            $uneTrace =new Trace($idTrace, $uneDateHeureDebut, $uneDateHeureFin, $terminee, $unIdUtilisateur);
+            foreach($desPointDeTrace as $unPointDeTrace)
+            {
+                $uneTrace->ajouterPoint($unPointDeTrace);
+            }
+            
+            return $uneTrace;
+        }
+        else{return null;}
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // --------------------------------------------------------------------------------------
+    // début de la zone attribuée au développeur 2 (jean) : lignes 550 à 749
     // --------------------------------------------------------------------------------------
     
 
@@ -547,207 +803,7 @@ class DAO
     
     
     // --------------------------------------------------------------------------------------
-    // début de la zone attribuée au développeur 2 (xxxxxxxxxxxxxxxxxxxx) : lignes 550 à 749
-    // --------------------------------------------------------------------------------------
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // --------------------------------------------------------------------------------------
-    // début de la zone attribuée au développeur 3 (xxxxxxxxxxxxxxxxxxxx) : lignes 750 à 949
+    // début de la zone attribuée au développeur 3 (noe) : lignes 750 à 949
     // --------------------------------------------------------------------------------------
     
     
@@ -947,7 +1003,7 @@ class DAO
     
    
     // --------------------------------------------------------------------------------------
-    // début de la zone attribuée au développeur 4 (xxxxxxxxxxxxxxxxxxxx) : lignes 950 à 1150
+    // début de la zone attribuée au développeur 4 (julien) : lignes 950 à 1150
     // --------------------------------------------------------------------------------------
     
     
