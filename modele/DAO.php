@@ -375,9 +375,8 @@ class DAO
         
         
         if($idTrace==$uneLigne->id){
-            $desPointDeTrace=array();
-            $desPointDeTrace[] = new PointDeTrace(1, 1, 48.500, -1.600, 50, "2017-12-11 14:00:00", 80, 0, 0, 0);
-            $desPointDeTrace[] = new PointDeTrace(1, 1, 48.600, -1.700, 50, "2017-12-11 14:03:00", 80, 0, 0, 0);//getLesPointsDeTrace($idTrace);
+            //$desPointDeTrace=array();
+            $desPointDeTrace = DAO::getLesPointsDeTrace($idTrace);
             // préparation de la requête de recherche
             $txt_req = "Select dateDebut, dateFin, terminee, idUtilisateur";
             $txt_req .= " from tracegps_vue_traces";
@@ -397,7 +396,9 @@ class DAO
             $estTerminee=$uneLigne->terminee;
             if ($estTerminee==1){$terminee=true;}else{$terminee=false;}
             $unIdUtilisateur=$uneLigne->idUtilisateur;
+            
             $uneTrace =new Trace($idTrace, $uneDateHeureDebut, $uneDateHeureFin, $terminee, $unIdUtilisateur);
+            
             foreach($desPointDeTrace as $unPointDeTrace)
             {
                 $uneTrace->ajouterPoint($unPointDeTrace);
@@ -551,7 +552,7 @@ class DAO
     // début de la zone attribuée au développeur 2 (jean) : lignes 550 à 749
     // --------------------------------------------------------------------------------------
     
-    function getLesPointsDeTrace($idTrace) {
+    public function getLesPointsDeTrace($idTrace) {
         
         $lesPoints = array();
         

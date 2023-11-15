@@ -161,7 +161,7 @@ class Trace
     public function getDenivelePositif(){
         $totalDenivele = 0;
 
-        for ($i = 1; $i < $this->getNombrePoints()-1; $i++) {
+        for ($i = 1; $i < $this->getNombrePoints(); $i++) {
             $altitude1 = $this->lesPointsDeTrace[$i-1]->getAltitude();
             $altitude2 = $this->lesPointsDeTrace[$i]->getAltitude();
             
@@ -175,11 +175,11 @@ class Trace
     public function getDeniveleNegatif(){
         $totalDenivele = 0;
         
-        for ($i = 1; $i < $this->getNombrePoints()-1; $i++) {
+        for ($i = 1; $i < $this->getNombrePoints(); $i++) {
             $altitude1 = $this->lesPointsDeTrace[$i-1]->getAltitude();
             $altitude2 = $this->lesPointsDeTrace[$i]->getAltitude();
             
-            if($altitude1 < $altitude2){
+            if($altitude1 > $altitude2){
                 $totalDenivele += $altitude1 - $altitude2;
             }
         }
