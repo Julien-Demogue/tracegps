@@ -358,6 +358,8 @@ class DAO
     // début de la zone attribuée au développeur 1 (eric) : lignes 350 à 549
     // --------------------------------------------------------------------------------------
     
+    // getUneTrace($idTrace) : fournit un objet Trace à partir de identifiant $idTrace
+    
     public function getUneTrace($idTrace)
     {
         // préparation de la requête de recherche
@@ -410,6 +412,7 @@ class DAO
     }
     
     
+    // getToutesLesTraces() : fournit la collection de toutes les traces
     
     public function getToutesLesTraces()
     {
@@ -451,6 +454,48 @@ class DAO
     }
     
     
+    
+    // getLesTraces($idUtilisateur) : fournit la collection des traces de l'utilisateur $idUtilisateur
+    
+    public function getLesTraces($idUtilisateur)
+    {
+        $toutesLesTraces=array();
+        // préparation de la requête de recherche
+        $txt_req = "Select id, dateDebut, dateFin, terminee, idUtilisateur";
+        $txt_req .= " from tracegps_traces where idUtilisateur = :idUtilisateur order by id desc" ;
+        
+        $req = $this->cnx->prepare($txt_req);
+        $req->bindValue("idUtilisateur", $idUtilisateur, \PDO::PARAM_STR);
+        // extraction des données
+        $req->execute();
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        
+        
+        while ($uneLigne) {
+            // création d'un objet Utilisateur
+            $unId = mb_convert_encoding($uneLigne->id, "UTF-8");
+            $uneDateDebut = mb_convert_encoding($uneLigne->dateDebut, "UTF-8");
+            $uneDateFin = $uneLigne->dateFin;
+            $estTerminee=$uneLigne->terminee;
+            if ($estTerminee==1){$terminee=true;}else{$terminee=false;}
+            $unIdUtilisateur = mb_convert_encoding($uneLigne->idUtilisateur, "UTF-8");
+            
+            $uneTrace = new Trace($unId, $uneDateDebut, $uneDateFin, $terminee, $unIdUtilisateur);
+            $lesPointsDeLaTrace=DAO::getLesPointsDeTrace($unId);
+            foreach($lesPointsDeLaTrace as $unPointDeTrace)
+            {
+                $uneTrace->ajouterPoint($unPointDeTrace);
+            }
+            // ajout de l'utilisateur à la collection
+            $toutesLesTraces[] = $uneTrace;
+            // extrait la ligne suivante
+            $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        }
+        // libère les ressources du jeu de données
+        $req->closeCursor();
+        // fourniture de la collection
+        return $toutesLesTraces;
+    }
     
     
     
