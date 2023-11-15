@@ -754,7 +754,102 @@ class DAO
     
     
     
+    // Infos sur Teams : tableau excel des tâches
+    // Infos sur SkolStlenneg : AP 2.6
+    // creerUneTrace(Trace $uneTrace) : enregistre la trace $uneTrace dans la bdd
+    public function creerUneTrace($uneTrace){
+        // Intégration de la trace à la BDD
+        $txt_req = "INSERT INTO tracegps_traces(dateDebut,dateFin,terminee,idUtilisateur) values (:uneDateHeureDebut,:uneDateHeureFin,:terminee,:unIdUtilisateur)";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("uneDateHeureDebut", mb_convert_encoding($uneTrace->getDateHeureDebut(), "UTF-8"), \PDO::PARAM_STR);
+        $req->bindValue("uneDateHeureFin", mb_convert_encoding($uneTrace->getDateHeureFin(), "UTF-8"), \PDO::PARAM_STR);
+        $req->bindValue("terminee", mb_convert_encoding($uneTrace->getTerminee(), "UTF-8"), \PDO::PARAM_STR);
+        $req->bindValue("unIdUtilisateur", mb_convert_encoding($uneTrace->getIdUtilisateur(), "UTF-8"), \PDO::PARAM_STR);
+        // extraction des données
+        $ok = $req->execute();
+        
+        $reponse = true;
+        
+        if (! $ok){
+            $reponse = false;
+        }
+        
+        $unId = $this->cnx->lastInsertId(); // Pour la mise à jour de l'objet $uneTrace
+        $uneTrace->setId($unId); // mise à jour de l'objet $uneTrace
+        return $reponse;
+    }
     
+    // existeAdrMailUtilisateur($adrmail) : fournit true si l'adresse mail $adrMail existe dans la table tracegps_utilisateurs, false sinon
+    public function existeAdrMailUtilisateur($adrmail){
+        $txt_req = "Select adrmail from tracegps_utilisateurs";
+        $txt_req .= " where adrmail = :adrmail";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("adrmail", $adrmail, \PDO::PARAM_STR);
+        // extraction des données
+        $req->execute();
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        // traitement de la réponse
+        $reponse = false;
+        if ($uneLigne) {
+            $reponse = true;
+        }
+        // libère les ressources du jeu de données
+        $req->closeCursor();
+        // fourniture de la réponse
+        return $reponse;
+    }
+    
+    // supprimerUneTrace($idTrace) : supprime la trace d'identifiant $idTrace dans la bdd, ainsi que tous ses points
+    public function supprimerUneTrace($idTrace){
+        
+        //Première requête, elle delete tous les points liés à la trace
+        $txt_req = "DELETE FROM tracegps_points WHERE idTrace = :idTrace";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("idTrace", $idTrace, \PDO::PARAM_STR);
+        // extraction des données
+        $req->execute();
+        
+        //Deuxième requête, elle delete la trace
+        $txt_req = "DELETE FROM tracegps_traces WHERE id = :idTrace";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("idTrace", $idTrace, \PDO::PARAM_STR);
+        // extraction des données
+        $req->execute();
+        
+        //Requêtes de vérification
+        $reponse = true;
+        
+        $txt_req = "SELECT idTrace FROM tracegps_points WHERE idTrace = :idTrace";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("idTrace", $idTrace, \PDO::PARAM_STR);
+        // extraction des données
+        $req->execute();
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        // traitement de la réponse
+        if ($uneLigne) {
+            $reponse = false;
+        }
+        $txt_req = "SELECT id FROM tracegps_traces WHERE id = :idTrace";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("idTrace", $idTrace, \PDO::PARAM_STR);
+        // extraction des données
+        $req->execute();
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        // traitement de la réponse
+        if ($uneLigne) {
+            $reponse = false;
+        }
+        // libère les ressources du jeu de données
+        $req->closeCursor();
+        // fourniture de la réponse
+        return $reponse;
+    }
     
     
     
