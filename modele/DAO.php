@@ -379,7 +379,7 @@ class DAO
             $desPointDeTrace = DAO::getLesPointsDeTrace($idTrace);
             // préparation de la requête de recherche
             $txt_req = "Select dateDebut, dateFin, terminee, idUtilisateur";
-            $txt_req .= " from tracegps_vue_traces";
+            $txt_req .= " from tracegps_traces";
             $txt_req .= " where id = :id";
             $req = $this->cnx->prepare($txt_req);
             // liaison de la requête et de ses paramètres
@@ -411,7 +411,44 @@ class DAO
     
     
     
-    
+    public function getToutesLesTraces()
+    {
+        $toutesLesTraces=array();
+        // préparation de la requête de recherche
+        $txt_req = "Select id, dateDebut, dateFin, terminee, idUtilisateur";
+        $txt_req .= " from tracegps_traces order by id desc" ;
+               
+        $req = $this->cnx->prepare($txt_req);
+        // extraction des données
+        $req->execute();
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        
+        
+        while ($uneLigne) {
+            // création d'un objet Utilisateur
+            $unId = mb_convert_encoding($uneLigne->id, "UTF-8");
+            $uneDateDebut = mb_convert_encoding($uneLigne->dateDebut, "UTF-8");
+            $uneDateFin = $uneLigne->dateFin;
+            $estTerminee=$uneLigne->terminee;
+            if ($estTerminee==1){$terminee=true;}else{$terminee=false;}
+            $unIdUtilisateur = mb_convert_encoding($uneLigne->idUtilisateur, "UTF-8");
+            
+            $uneTrace = new Trace($unId, $uneDateDebut, $uneDateFin, $terminee, $unIdUtilisateur);
+            $lesPointsDeLaTrace=DAO::getLesPointsDeTrace($unId);
+            foreach($lesPointsDeLaTrace as $unPointDeTrace)
+            {
+                $uneTrace->ajouterPoint($unPointDeTrace);
+            }
+            // ajout de l'utilisateur à la collection
+            $toutesLesTraces[] = $uneTrace;
+            // extrait la ligne suivante
+            $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        }
+        // libère les ressources du jeu de données
+        $req->closeCursor();
+        // fourniture de la collection
+        return $toutesLesTraces;
+    }
     
     
     
