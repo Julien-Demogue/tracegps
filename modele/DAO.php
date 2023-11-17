@@ -947,7 +947,50 @@ class DAO
     
     
     
+    //fournit la collection  des utilisateurs (de niveau 1) autorisés à suivre l'utilisateur $idUtilisateur
+    public function getLesUtilisateursAutorises($idUtilisateur){
+        $txt_req = "SELECT pseudo FROM tracegps_utilisateurs ";
+        $txt_req .= "JOIN tracegps_autorisations ON tracegps_autorisations.idAutorise = tracegps_utilisateurs.id ";
+        $txt_req .= "WHERE niveau = 1 AND idAutorisant = :idUtilisateur";
+        
+        $req = $this->cnx->prepare($txt_req);
+        $req->bindValue("idUtilisateur", $idUtilisateur, \PDO::PARAM_INT);
+        
+        $req->execute();
+        
+        $uneLigne = $req->fetchAll(\PDO::FETCH_COLUMN);
+        
+        $lesUtilisateurs = array();
+        foreach ($uneLigne as $unPseudo) {
+            $unUtilisateur = $this->getUnUtilisateur($unPseudo);
+            $lesUtilisateurs[] = $unUtilisateur;
+        }
+        $req->closeCursor();
+        
+        return $lesUtilisateurs;
+    }
     
+    //fournit la collection  des utilisateurs (de niveau 1) autorisant l'utilisateur $idUtilisateur à voir leurs parcours
+    public function getLesUtilisateursAutorisant($idUtilisateur){
+        $txt_req = "SELECT pseudo FROM tracegps_utilisateurs ";
+        $txt_req .= "JOIN tracegps_autorisations ON tracegps_autorisations.idAutorisant = tracegps_utilisateurs.id ";
+        $txt_req .= "WHERE niveau = 1 AND idAutorise = :idUtilisateur";
+        
+        $req = $this->cnx->prepare($txt_req);
+        $req->bindValue("idUtilisateur", $idUtilisateur, \PDO::PARAM_INT);
+        
+        $req->execute();
+        $uneLigne = $req->fetchAll(\PDO::FETCH_COLUMN);
+        
+        $lesUtilisateurs = array();
+        foreach ($uneLigne as $unPseudo) {
+            $unUtilisateur = $this->getUnUtilisateur($unPseudo);
+            $lesUtilisateurs[] = $unUtilisateur;
+        }
+        $req->closeCursor();
+        
+        return $lesUtilisateurs;
+    }
     
     
     
