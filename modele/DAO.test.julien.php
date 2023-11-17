@@ -28,21 +28,42 @@ namespace modele;
 
 <?php
 // connexion du serveur web à la base MySQL
-include_once ('DAO.php');
+include_once ('DAO.personnel.php');
 $dao = new DAO();
 
+// Tests -------------------------------
 
-// test de la méthode xxxxxxxxxxxxxxxxxxxxxxxxxxx ----------------------------------------------------------
-// modifié par xxxxxxxxxxxxxxxxx le xxxxxxxxxx
-echo "<h3>Test de xxxxxxxxxxxxxxxxx : </h3>";
-// A CONTINUER .........
+// test de la méthode getLesUtilisateursAutorises -------------------------------------------------
+echo "<h3>Test de getLesUtilisateursAutorises(idUtilisateur) : </h3>";
+$lesUtilisateurs = $dao->getLesUtilisateursAutorises(2);
+$nbReponses = sizeof($lesUtilisateurs);
+echo "<p>Nombre d'utilisateurs autorisés par l'utilisateur 2 : " . $nbReponses . "</p>";
+// affichage des utilisateurs
+foreach ($lesUtilisateurs as $unUtilisateur)
+{ 
+    echo ($unUtilisateur->toString());
+    echo ('<br>');
+}
 
+// test de la méthode getLesUtilisateursAutorisant ------------------------------------------------
+// modifié par dP le 13/8/2021
+echo "<h3>Test de getLesUtilisateursAutorisant(idUtilisateur) : </h3>";
+$lesUtilisateurs = $dao->getLesUtilisateursAutorisant(4);
+$nbReponses = sizeof($lesUtilisateurs);
+echo "<p>Nombre d'utilisateurs autorisant l'utilisateur 4 à voir leurs parcours : " . $nbReponses . "</p>";
+// affichage des utilisateurs
+foreach ($lesUtilisateurs as $unUtilisateur)
+{ 
+    echo ($unUtilisateur->toString());
+    echo ('<br>');
+}
 
-
-
-
-
-
+// test de la méthode autoriseAConsulter ----------------------------------------------------------
+echo "<h3>Test de autoriseAConsulter : </h3>";
+if ($dao->autoriseAConsulter(2, 3)) $autorise = "oui"; else $autorise = "non";
+echo "<p>L'utilisateur 2 autorise l'utilisateur 3 : <b>" . $autorise . "</b><br>";
+if ($dao->autoriseAConsulter(3, 2)) $autorise = "oui"; else $autorise = "non";
+echo "<p>L'utilisateur 3 autorise l'utilisateur 2 : <b>" . $autorise . "</b><br>";
 
 // ferme la connexion à MySQL :
 unset($dao);
