@@ -997,6 +997,26 @@ class DAO
         return $lesUtilisateurs;
     }
     
+    // vérifie que l'utilisateur ($idAutorisant) autorise l'utilisateur ($idAutorise) à consulter ses traces
+    public function autoriseAConsulter($idAutorisant,$idAutorise){
+        $txt_req = "SELECT * FROM tracegps_autorisations ";
+        $txt_req .= "WHERE idAutorise = :idAutorise AND idAutorisant = :idAutorisant";
+        
+        $req = $this->cnx->prepare($txt_req);
+        $req->bindValue("idAutorise", $idAutorise, \PDO::PARAM_INT);
+        $req->bindValue("idAutorisant", $idAutorisant, \PDO::PARAM_INT);
+        
+        $req->execute();
+        $nbReponses = $req->fetchColumn(0);
+        
+        $req->closeCursor();
+        
+        if ($nbReponses == 0) {
+            return false;
+        }
+        return true;
+    }
+    
     
     
     
