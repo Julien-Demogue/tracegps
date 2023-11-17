@@ -1018,7 +1018,32 @@ class DAO
     }
     
     
-    
+    // creerUneAutorisation($idAutorisant, $idAutorise) : enregistre l'autorisation ($idAutorisant, $idAutorise) dans la bdd
+    public function creerUneAutorisation($idAutorisant,$idAutorise){
+        $txt_req = "SELECT * FROM tracegps_autorisations WHERE idAutorisant = :idAutorisant AND idAutorise = :idAutorise;";
+        $req = $this->cnx->prepare($txt_req);
+        $req->bindValue("idAutorisant", $idAutorisant, \PDO::PARAM_INT);
+        $req->bindValue("idAutorise", $idAutorise, \PDO::PARAM_INT);
+        $req->execute();
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        
+        $reponse = false;
+        // si une ligne est trouvée alors on ne fait pas l'insertion car elle est inutile
+        if (! $uneLigne){
+            $reponse = true;
+            $txt_req = "INSERT INTO tracegps_autorisations VALUES (:idAutorisant,:idAutorise);";
+            $req = $this->cnx->prepare($txt_req);
+            $req->bindValue("idAutorisant", $idAutorisant, \PDO::PARAM_INT);
+            $req->bindValue("idAutorise", $idAutorise, \PDO::PARAM_INT);
+            
+            $result = $req->execute();
+            // Verification
+            if(!$result){
+                $reponse = false;
+            }
+        }
+        return $reponse;
+    }
     
     
     
