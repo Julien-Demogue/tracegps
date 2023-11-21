@@ -762,9 +762,16 @@ class DAO
         $req = $this->cnx->prepare($txt_req);
         // liaison de la requête et de ses paramètres
         $req->bindValue("uneDateHeureDebut", mb_convert_encoding($uneTrace->getDateHeureDebut(), "UTF-8"), \PDO::PARAM_STR);
-        $req->bindValue("uneDateHeureFin", mb_convert_encoding($uneTrace->getDateHeureFin(), "UTF-8"), \PDO::PARAM_STR);
+        $dateHeureFin = $uneTrace->getDateHeureFin();
+        if ($dateHeureFin === null) {
+            // Si la date est null, on la traite comme telle
+            $req->bindValue("uneDateHeureFin", null, \PDO::PARAM_NULL);
+        } else {
+            // Sinon, on assure que c'est une chaîne de caractères avant d'appliquer mb_convert_encoding
+            $req->bindValue("uneDateHeureFin", mb_convert_encoding($dateHeureFin, "UTF-8"), \PDO::PARAM_STR);
+        }
         $req->bindValue("terminee", mb_convert_encoding($uneTrace->getTerminee(), "UTF-8"), \PDO::PARAM_STR);
-        $req->bindValue("unIdUtilisateur", mb_convert_encoding($uneTrace->getIdUtilisateur(), "UTF-8"), \PDO::PARAM_STR);
+        $req->bindValue("unIdUtilisateur", $uneTrace->getIdUtilisateur(), \PDO::PARAM_INT);
         // extraction des données
         $ok = $req->execute();
         

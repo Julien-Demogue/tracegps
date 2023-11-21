@@ -1,7 +1,7 @@
 <?php
 // Projet TraceGPS - services web
 // fichier :  api/services/CreerUnUtilisateur.php
-// Derniere mise à jour : 3/7/2021 par dP
+// Derniere mise à jour : 21/11/2023 par Julien
 
 // Rôle : ce service permet à un utilisateur de supprimer un de ses parcours (ou traces).
 // Le service web doit recevoir 4 parametres :
@@ -47,7 +47,7 @@ else {
             $uneTrace = $dao->getUneTrace($idTrace);
             if ($uneTrace == null){  
                 $msg = "Erreur : parcours inexistant.";
-                $code_reponse = 402;
+                $code_reponse = 400;
             }
             else
             {   
@@ -55,7 +55,7 @@ else {
                 
                 if($uneTrace->getIdUtilisateur() != $dao->getUnUtilisateur($pseudo)->getId()){
                     $msg = "Erreur : vous n'etes pas le proprietaire de ce parcours.";
-                    $code_reponse = 403;
+                    $code_reponse = 401;
                 }
                 else{
                     // suppression de l'utilisateur dans la BDD
