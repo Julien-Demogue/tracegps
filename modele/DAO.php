@@ -376,7 +376,7 @@ class DAO
         $req->closeCursor();
         
         
-        if($idTrace==$uneLigne->id){
+        if(isset($uneLigne->id)){
             //$desPointDeTrace=array();
             $desPointDeTrace = DAO::getLesPointsDeTrace($idTrace);
             // préparation de la requête de recherche
