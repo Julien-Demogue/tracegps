@@ -590,6 +590,71 @@ class DAO
     
     
     
+    public function supprimerUneAutorisation($idAutorisant, $idAutorise)
+    {
+        $txt_req = "Delete from tracegps_autorisations ";
+        $txt_req .= " where idAutorisant = :idAutorisant and idAutorise = :idAutorise";
+        $req = $this->cnx->prepare($txt_req);
+        $req -> bindvalue ('idAutorisant',$idAutorisant,\PDO::PARAM_STR);
+        $req -> bindvalue ('idAutorise',$idAutorise,\PDO::PARAM_STR);
+        $ok = true;
+        
+        $txt_req = "Select idAutorisant, idAutorise from tracegps_autorisations";
+        $txt_req .= " where idAutorisant = :idAutorisant and idAutorise = :idAutorise";
+        $req -> bindvalue ('idAutorisant',$idAutorisant,\PDO::PARAM_STR);
+        $req -> bindvalue ('idAutorise',$idAutorise,\PDO::PARAM_STR);
+        
+        
+        // extraction des données
+        $req->execute();
+        $uneLigne = $req->fetch(\PDO::FETCH_OBJ);
+        
+        if ($uneLigne){
+            $ok = false;
+            
+        }
+        
+        return $ok;
+    }
+    
+    public function creerUnPointDeTrace($unPointDeTrace) {
+        
+        
+        $txt_req = "INSERT INTO tracegps_points ";
+        $txt_req .= "VALUES (:idTrace,:id, :latitude,:longitude,:altitude,:dateHeure,:rythmeCardio)";
+        
+        $req = $this->cnx->prepare($txt_req);
+        $req -> bindvalue ('id',mb_convert_encoding($unPointDeTrace ->getId(),"UTF-8"),\PDO::PARAM_STR);
+        $req -> bindvalue ('idTrace',mb_convert_encoding($unPointDeTrace ->getIdTrace(),"UTF-8"),\PDO::PARAM_STR);
+        $req -> bindvalue ('latitude',mb_convert_encoding($unPointDeTrace ->getLatitude(),"UTF-8"),\PDO::PARAM_STR);
+        $req -> bindvalue ('longitude',mb_convert_encoding($unPointDeTrace ->getLongitude(),"UTF-8"),\PDO::PARAM_STR);
+        $req -> bindvalue ('altitude',mb_convert_encoding($unPointDeTrace ->getAltitude(),"UTF-8"),\PDO::PARAM_STR);
+        $req -> bindvalue ('dateHeure',mb_convert_encoding($unPointDeTrace ->getDateHeure(),"UTF-8"),\PDO::PARAM_STR);
+        $req -> bindvalue ('rythmeCardio',mb_convert_encoding($unPointDeTrace ->getRythmeCardio(),"UTF-8"),\PDO::PARAM_STR);
+        
+        $ok = $req->execute();
+        
+        if ($unPointDeTrace->getId() == 1) {
+            // Update the trace's start date with the point's date
+            $txt_trace = "UPDATE tracegps_traces SET dateDebut = :dateDebut WHERE idTrace = :idTrace";
+            $req2 = $this->cnx->prepare($txt_trace);
+            //$req2 -> bindvalue ('idTrace',mb_convert_encoding($unPointDeTrace ->getIdTrace(),"UTF-8"),\PDO::PARAM_STR);
+            //$req2 -> bindvalue ('dateDebut',mb_convert_encoding($unPointDeTrace->getDateHeure(),"UTF-8"),\PDO::PARAM_STR);
+            $ok2 = $req2->execute();
+        }
+        $ok2=true;
+        
+        if(!$ok || !$ok2){return false;}
+        
+        $unId = $this->cnx->lastInsertId();
+        $unPointDeTrace->setId($unId);
+        
+        return true;
+        
+    }
+    
+    
+    
     
     
     
