@@ -38,7 +38,7 @@ else{
         $code_reponse = 400;
     }
     else{
-        // il faut être utilisateur pour demarrer un enregistrement
+        // il faut être utilisateur pour arreter un enregistrement
         if ( $dao->getNiveauConnexion($pseudo, $mdp) != 1 ){
             $msg = "Erreur : authentification incorrecte.";
             $code_reponse = 401;
@@ -80,12 +80,6 @@ else{
         }
     }
 }
-
-
-
-
-
-
 
 
 // ferme la connexion à MySQL :
