@@ -1,14 +1,16 @@
 <?php
 // Projet TraceGPS - services web
-// fichier :  api/services/DemarrerEnregistrementParcours.php
+// fichier :  api/services/ArreterEnregistrementParcours.php
 // Derniere mise à jour : 24/11/2023 par Julien
 
-// Rôle : ce service web permet à un utilisateur de démarrer l'enregistrement d'un parcours.
+// Rôle : ce service web permet à un utilisateur de terminer l'enregistrement d'un parcours.
 // Le service web doit recevoir 3 parametres :
 //      pseudo : le pseudo de l'utilisateur
 //      mdp : le mot de passe de l'utilisateur hashé en sha1
+//      idTrace : l'id de la trace à terminer
 //      lang : le langage utilisé pour le flux de données ("xml" ou "json")
 //  Le service retourne un flux de donnees XML ou JSON contenant un compte-rendu d'execution
+
 namespace api;
 use modele\DAO;
 use modele\Trace;
@@ -18,6 +20,7 @@ $dao = new DAO();
 
 $pseudo = ( empty($this->request['pseudo'])) ? "" : $this->request['pseudo'];
 $mdp = ( empty($this->request['mdp'])) ? "" : $this->request['mdp'];
+$idTrace = ( empty($this->request['idTrace'])) ? "" : $this->request['idTrace'];
 $lang = ( empty($this->request['lang'])) ? "" : $this->request['lang'];
 
 // "xml" par defaut si le parametre lang est absent ou incorrect
@@ -30,7 +33,7 @@ if ($this->getMethodeRequete() != "GET"){
 }
 else{
     // Les paramètres doivent être présents
-    if ( $pseudo == "" || $mdp == ""){
+    if ( $pseudo == "" || $mdp == "" || $idTrace == ""){
         $msg = "Erreur : donnees incompletes.";
         $code_reponse = 400;
     }
@@ -41,23 +44,49 @@ else{
             $code_reponse = 401;
         }
         else{
-            // Creer une nouvelle Trace
-            $uneDateHeureDebut = date('Y-m-d H:i:s');
-            $unIdUtilisateur = $dao->getUnUtilisateur($pseudo)->getId();
-            $uneTrace = new Trace(0,$uneDateHeureDebut,null,0,$unIdUtilisateur);
-            $ok = $dao->creerUneTrace($uneTrace);
-            
-            if(!$ok){
-                $msg = "Erreur : problème lors de l'enregistrement.";
-                $code_reponse = 500;
+            // contrôle d'existence de idTrace
+            $uneTrace = $dao->getUneTrace($idTrace);
+            if ($uneTrace == null){
+                $msg = "Erreur : parcours inexistant.";
+                $code_reponse = 400;
             }
-            else{
-                $msg = "Trace creee.";
-                $code_reponse = 200;
+            else
+            {
+                //Verification que la trace appartient a l'utilisateur
+                if($uneTrace->getIdUtilisateur() != $dao->getUnUtilisateur($pseudo)->getId()){
+                    $msg = "Erreur : le numero de trace ne correspond pas a cet utilisateur.";
+                    $code_reponse = 401;
+                }
+                else{
+                    // verifier si la trace est deja terminee 
+                    if ( $uneTrace->getTerminee() ) {
+                        $msg = "Erreur : cette trace est deja terminee.";
+                        $code_reponse = 401;
+                    }
+                    else {
+                        // Mettre fin a la trace
+                        $ok = $dao->terminerUneTrace($idTrace);
+                        if(!$ok){
+                            $msg = "Erreur : probleme lors de la fin de l'enregistrement de la trace.";
+                            $code_reponse = 500;
+                        }
+                        else{
+                            $msg = "Enregistrement termine.";
+                            $code_reponse = 200;
+                        }
+                    }
+                }
             }
         }
     }
 }
+
+
+
+
+
+
+
 
 // ferme la connexion à MySQL :
 unset($dao);
@@ -90,7 +119,7 @@ function creerFluxXML($msg)
     $doc->encoding = 'UTF-8';
     
     // crée un commentaire et l'encode en UTF-8
-    $elt_commentaire = $doc->createComment('Service web DemarrerEnregistrementparcours - BTS SIO - Lycée De La Salle - Rennes');
+    $elt_commentaire = $doc->createComment('Service web ArreterEnregistrementparcours - BTS SIO - Lycée De La Salle - Rennes');
     // place ce commentaire à la racine du document XML
     $doc->appendChild($elt_commentaire);
     
