@@ -854,10 +854,11 @@ class DAO
         // conversion en date afin de pouvoir utiliser le timestamp
         
         
-        $txt_req = "UPDATE tracegps_traces SET terminee = 1, dateFin = :dateFin";
+        $txt_req = "UPDATE tracegps_traces SET terminee = 1, dateFin = :dateFin WHERE id = :idTrace";
         $req = $this->cnx->prepare($txt_req);
         // liaison de la requête et de ses paramètres
         $req->bindValue("dateFin", $dateFin, \PDO::PARAM_STR);
+        $req->bindValue("idTrace", $idTrace, \PDO::PARAM_INT);
         // extraction des données
         $ok = $req->execute();
         

@@ -1,7 +1,7 @@
 <?php
 // Projet TraceGPS - services web
 // fichier :  api/services/DemarrerEnregistrementParcours.php
-// Derniere mise à jour : 21/11/2023 par Julien
+// Derniere mise à jour : 24/11/2023 par Julien
 
 // Rôle : ce service web permet à un utilisateur de démarrer l'enregistrement d'un parcours.
 // Le service web doit recevoir 3 parametres :

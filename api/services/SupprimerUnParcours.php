@@ -32,7 +32,7 @@ if ($this->getMethodeRequete() != "GET"){
 }
 else {
     // Les paramètres doivent être présents
-    if ( $pseudo == "" || $mdp == "" || $idTrace == null ){	
+    if ( $pseudo == "" || $mdp == "" || $idTrace == "" ){	
         $msg = "Erreur : donnees incompletes.";
         $code_reponse = 400;
     }
