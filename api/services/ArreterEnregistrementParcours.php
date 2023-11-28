@@ -1,22 +1,23 @@
 <?php
 // Projet TraceGPS - services web
-// fichier :  api/services/CreerUnUtilisateur.php
-// Derniere mise à jour : 21/11/2023 par Julien
+// fichier :  api/services/ArreterEnregistrementParcours.php
+// Derniere mise à jour : 24/11/2023 par Julien
 
-// Rôle : ce service permet à un utilisateur de supprimer un de ses parcours (ou traces).
-// Le service web doit recevoir 4 parametres :
-//      pseudo : le pseudo de l'utilisateur qui demande à supprimer
-//      mdp : le mot de passe hashé en sha1 de l'utilisateur qui demande à supprimer
-//      idTrace : l'id de la trace à supprimer
-//      lang : le langage utilisé pour le flux de donnees ("xml" ou "json")
+// Rôle : ce service web permet à un utilisateur de terminer l'enregistrement d'un parcours.
+// Le service web doit recevoir 3 parametres :
+//      pseudo : le pseudo de l'utilisateur
+//      mdp : le mot de passe de l'utilisateur hashé en sha1
+//      idTrace : l'id de la trace à terminer
+//      lang : le langage utilisé pour le flux de données ("xml" ou "json")
 //  Le service retourne un flux de donnees XML ou JSON contenant un compte-rendu d'execution
+
 namespace api;
 use modele\DAO;
+use modele\Trace;
 use DOMDocument;
 // connexion du serveur web à la base MySQL
 $dao = new DAO();
 
-// Recuperation des donnees transmises
 $pseudo = ( empty($this->request['pseudo'])) ? "" : $this->request['pseudo'];
 $mdp = ( empty($this->request['mdp'])) ? "" : $this->request['mdp'];
 $idTrace = ( empty($this->request['idTrace'])) ? "" : $this->request['idTrace'];
@@ -26,56 +27,60 @@ $lang = ( empty($this->request['lang'])) ? "" : $this->request['lang'];
 if ($lang != "json") $lang = "xml";
 
 // La methode HTTP utilisee doit etre GET
-if ($this->getMethodeRequete() != "GET"){	
+if ($this->getMethodeRequete() != "GET"){
     $msg = "Erreur : methode HTTP incorrecte.";
     $code_reponse = 406;
 }
-else {
+else{
     // Les paramètres doivent être présents
-    if ( $pseudo == "" || $mdp == "" || $idTrace == "" ){	
+    if ( $pseudo == "" || $mdp == "" || $idTrace == ""){
         $msg = "Erreur : donnees incompletes.";
         $code_reponse = 400;
     }
-    else
-    {	// il faut être utilisateur pour supprimer un parcours
-        if ( $dao->getNiveauConnexion($pseudo, $mdp) != 1 ){   
+    else{
+        // il faut être utilisateur pour arreter un enregistrement
+        if ( $dao->getNiveauConnexion($pseudo, $mdp) != 1 ){
             $msg = "Erreur : authentification incorrecte.";
             $code_reponse = 401;
         }
-        else
-        {	// contrôle d'existence de idTrace
+        else{
+            // contrôle d'existence de idTrace
             $uneTrace = $dao->getUneTrace($idTrace);
-            if ($uneTrace == null){  
+            if ($uneTrace == null){
                 $msg = "Erreur : parcours inexistant.";
                 $code_reponse = 400;
             }
             else
-            {   
+            {
                 //Verification que la trace appartient a l'utilisateur
-                
                 if($uneTrace->getIdUtilisateur() != $dao->getUnUtilisateur($pseudo)->getId()){
-                    $msg = "Erreur : vous n'etes pas le proprietaire de ce parcours.";
+                    $msg = "Erreur : le numero de trace ne correspond pas a cet utilisateur.";
                     $code_reponse = 401;
                 }
                 else{
-                    // suppression de l'utilisateur dans la BDD
-                    $ok = $dao->supprimerUneTrace($idTrace);
-                    if ( !$ok ) {
-                        $msg = "Erreur : probleme lors de la suppression du parcours.";
-                        $code_reponse = 500;
+                    // verifier si la trace est deja terminee 
+                    if ( $uneTrace->getTerminee() ) {
+                        $msg = "Erreur : cette trace est deja terminee.";
+                        $code_reponse = 401;
                     }
                     else {
-                        // tout a fonctionné
-                        $msg = "Parcours supprime";
-                        $code_reponse = 200;
+                        // Mettre fin a la trace
+                        $ok = $dao->terminerUneTrace($idTrace);
+                        if(!$ok){
+                            $msg = "Erreur : probleme lors de la fin de l'enregistrement de la trace.";
+                            $code_reponse = 500;
+                        }
+                        else{
+                            $msg = "Enregistrement termine.";
+                            $code_reponse = 200;
+                        }
                     }
                 }
             }
-            
         }
-        
     }
 }
+
 
 // ferme la connexion à MySQL :
 unset($dao);
@@ -83,11 +88,11 @@ unset($dao);
 // création du flux en sortie
 if ($lang == "xml") {
     $content_type = "application/xml; charset=utf-8";      // indique le format XML pour la réponse
-    $donnees = creerFluxXML($msg);
+    $donnees = creerFluxXML ($msg);
 }
 else {
     $content_type = "application/json; charset=utf-8";      // indique le format Json pour la réponse
-    $donnees = creerFluxJSON($msg);
+    $donnees = creerFluxJSON ($msg);
 }
 
 // envoi de la réponse HTTP
@@ -108,7 +113,7 @@ function creerFluxXML($msg)
     $doc->encoding = 'UTF-8';
     
     // crée un commentaire et l'encode en UTF-8
-    $elt_commentaire = $doc->createComment('Service web SupprimerUnParcours - BTS SIO - Lycée De La Salle - Rennes');
+    $elt_commentaire = $doc->createComment('Service web ArreterEnregistrementparcours - BTS SIO - Lycée De La Salle - Rennes');
     // place ce commentaire à la racine du document XML
     $doc->appendChild($elt_commentaire);
     
@@ -138,8 +143,7 @@ function creerFluxJSON($msg)
      "reponse": "Erreur : authentification incorrecte."
      }
      }
-     */
-    
+     */   
     // construction de l'élément "data"
     $elt_data = ["reponse" => $msg];
     
@@ -151,5 +155,4 @@ function creerFluxJSON($msg)
 }
 
 // ================================================================================================
-
 ?>
