@@ -20,6 +20,7 @@ $dao = new DAO();
 $pseudo = ( empty($this->request['pseudo'])) ? "" : $this->request['pseudo'];
 $mdp = ( empty($this->request['mdp'])) ? "" : $this->request['mdp'];
 $lang = ( empty($this->request['lang'])) ? "" : $this->request['lang'];
+$utilisateursAutorisant = array();
 
 // "xml" par defaut si le parametre lang est absent ou incorrect
 if ($lang != "json") $lang = "xml";

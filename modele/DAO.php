@@ -595,14 +595,14 @@ class DAO
         $txt_req = "Delete from tracegps_autorisations ";
         $txt_req .= " where idAutorisant = :idAutorisant and idAutorise = :idAutorise";
         $req = $this->cnx->prepare($txt_req);
-        $req -> bindvalue ('idAutorisant',$idAutorisant,\PDO::PARAM_STR);
-        $req -> bindvalue ('idAutorise',$idAutorise,\PDO::PARAM_STR);
+        $req -> bindvalue ('idAutorisant',$idAutorisant,\PDO::PARAM_INT);
+        $req -> bindvalue ('idAutorise',$idAutorise,\PDO::PARAM_INT);
         $ok = true;
         
         $txt_req = "Select idAutorisant, idAutorise from tracegps_autorisations";
         $txt_req .= " where idAutorisant = :idAutorisant and idAutorise = :idAutorise";
-        $req -> bindvalue ('idAutorisant',$idAutorisant,\PDO::PARAM_STR);
-        $req -> bindvalue ('idAutorise',$idAutorise,\PDO::PARAM_STR);
+        $req -> bindvalue ('idAutorisant',$idAutorisant,\PDO::PARAM_INT);
+        $req -> bindvalue ('idAutorise',$idAutorise,\PDO::PARAM_INT);
         
         
         // extraction des données
