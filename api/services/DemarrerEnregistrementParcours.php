@@ -65,11 +65,11 @@ unset($dao);
 // création du flux en sortie
 if ($lang == "xml") {
     $content_type = "application/xml; charset=utf-8";      // indique le format XML pour la réponse
-    $donnees = creerFluxXML ($msg);
+    $donnees = creerFluxXML ($msg,$uneTrace);
 }
 else {
     $content_type = "application/json; charset=utf-8";      // indique le format Json pour la réponse
-    $donnees = creerFluxJSON ($msg);
+    $donnees = creerFluxJSON ($msg,$uneTrace);
 }
 
 // envoi de la réponse HTTP
@@ -81,7 +81,7 @@ exit;
 // ================================================================================================
 
 // création du flux XML en sortie
-function creerFluxXML($msg)
+function creerFluxXML($msg,$trace)
 {	// crée une instance de DOMdocument (DOM : Document Object Model)
     $doc = new DOMDocument();
     
@@ -99,8 +99,20 @@ function creerFluxXML($msg)
     $doc->appendChild($elt_data);
     
     // place l'élément 'reponse' dans l'élément 'data'
-    $elt_reponse = $doc->createElement('reponse', $msg);
+    $elt_reponse = $elt_reponse = $doc->createElement('reponse', $msg);
     $elt_data->appendChild($elt_reponse);
+    
+    // ajouter les parametres de la trace
+    $elt_trace = $doc->createElement('trace');
+    $elt_id = $doc->createElement('id',$trace->getId());                                  $elt_trace->appendChild($elt_id);
+    $elt_dateHDebut = $doc->createElement('dateHeureDebut',$trace->getDateHeureDebut());  $elt_trace->appendChild($elt_dateHDebut);
+    $elt_terminee = $doc->createElement('terminee',$trace->getTerminee());                $elt_trace->appendChild($elt_terminee);
+    $elt_idUtilisateur = $doc->createElement('idUtilisateur',$trace->getIdUtilisateur()); $elt_trace->appendChild($elt_idUtilisateur);
+    
+    // place l'element 'donnees' dans l'element 'data'
+    $elt_donnees = $doc->createElement('donnees');
+    $elt_donnees->appendChild($elt_trace);
+    $elt_data->appendChild($elt_donnees);
     
     // Mise en forme finale
     $doc->formatOutput = true;
@@ -112,7 +124,7 @@ function creerFluxXML($msg)
 // ================================================================================================
 
 // création du flux JSON en sortie
-function creerFluxJSON($msg)
+function creerFluxJSON($msg,$trace)
 {
     /* Exemple de code JSON
      {
@@ -122,8 +134,17 @@ function creerFluxJSON($msg)
      }
      */
     
-    // construction de l'élément "data"
-    $elt_data = ["reponse" => $msg];
+    // construction des donnees de la trace
+    $elt_trace = ["trace" => [
+        "id" => $trace->getId(),
+        "dateHeureDebut" => $trace->getDateHeureDebut(),
+        "terminee" => $trace->getTerminee(),
+        "idUtilisateur" => $trace->getIdUtilisateur()
+        ]
+    ];
+    
+    // construction de l'élément "data" et "donnees"
+    $elt_data = ["reponse" => $msg, "donnees" => $elt_trace];
     
     // construction de la racine
     $elt_racine = ["data" => $elt_data];

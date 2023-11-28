@@ -143,8 +143,7 @@ function creerFluxJSON($msg)
      "reponse": "Erreur : authentification incorrecte."
      }
      }
-     */
-    
+     */   
     // construction de l'élément "data"
     $elt_data = ["reponse" => $msg];
     
