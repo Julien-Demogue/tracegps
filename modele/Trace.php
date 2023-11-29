@@ -207,7 +207,11 @@ class Trace
             
             $distanceCumulee = $dernierPoint->getDistanceCumulee() + $distanceEntrePoints;
             $tempsCumule = $dernierPoint->getTempsCumule() + $tempsEntrePoints;
-            $vitesse = $distanceEntrePoints / ($tempsEntrePoints/3600);
+            if($tempsEntrePoints == 0){
+                $vitesse = 0;
+            }else{
+                $vitesse = $distanceEntrePoints / ($tempsEntrePoints/3600);
+            }
         }
         
         $nvPoint->setDistanceCumulee($distanceCumulee);
