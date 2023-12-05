@@ -152,12 +152,15 @@ function creerFluxXML($msg,$desTraces)
             $elt_trace->appendChild($elt_terminee);
             
             
+            
             if ($uneTrace->getDateHeureFin()!=null)
             {
                 $elt_dateHeureFin = $doc->createElement('dateHeureFin',$uneTrace->getDateHeureFin());
                 $elt_trace->appendChild($elt_dateHeureFin);
             }
             
+            $elt_distance = $doc->createElement('distance',round($uneTrace->getDistanceTotale(),1));
+            $elt_trace->appendChild($elt_distance);
             
             $elt_idUtilisateur = $doc->createElement('idUtilisateur',$uneTrace->getIdUtilisateur());
             $elt_trace->appendChild($elt_idUtilisateur);
@@ -190,7 +193,7 @@ function creerFluxJSON($msg,$desTraces)
         $elt_lesTraces=[];
         foreach ($desTraces as $uneTrace)
         {
-            $elt_trace=["id"=>$uneTrace->getId(),"dateHeureDebut"=>$uneTrace->getDAteHeureDebut(),"terminee"=>$uneTrace->getTerminee(),"dateHeureFin"=>$uneTrace->getDateHeureFin(),"idUtilisateur"=>$uneTrace->getIdUtilisateur()];
+            $elt_trace=["id"=>$uneTrace->getId(),"dateHeureDebut"=>$uneTrace->getDAteHeureDebut(),"terminee"=>$uneTrace->getTerminee(),"dateHeureFin"=>$uneTrace->getDateHeureFin(),"distance"=>round($uneTrace->getDistanceTotale(),1),"idUtilisateur"=>$uneTrace->getIdUtilisateur()];
             $elt_lesTraces[]=$elt_trace;
         }
         
