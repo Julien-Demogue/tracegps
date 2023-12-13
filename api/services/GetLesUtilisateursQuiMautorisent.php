@@ -117,7 +117,7 @@ function creerFluxXML($msg,$utilisateurs)
         
         if($utilisateur->getNbTraces() > 0){
             $elt_nbTraces = $doc->createElement('nbTraces',$utilisateur->getNbTraces()); $elt_utilisateur->appendChild($elt_nbTraces);
-            $elt_dateDernieretrace = $doc->createElement('dateDernieretrace',$utilisateur->getDateDernieretrace()); $elt_utilisateur->appendChild($elt_dateDernieretrace);
+            $elt_dateDernieretrace = $doc->createElement('dateDerniereTrace',$utilisateur->getDateDernieretrace()); $elt_utilisateur->appendChild($elt_dateDernieretrace);
         }
         
         $elt_utilisateurs->appendChild($elt_utilisateur);
