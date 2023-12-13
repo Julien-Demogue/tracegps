@@ -50,13 +50,13 @@ $code_reponse = 406;
 }
 else {
     // Verification que les donnees transmises sont completes
-    if ( $pseudo == "" || $mdp == "" || $idTrace == "" || $dateHeure == "" || $latitude == "" || $longitude == "" || $altitude == "" || $rythmeCardio == "" ||  $lang == "" ) {
+    if ( $pseudo == "" || $mdp == "" || $idTrace == "" || $dateHeure == "" || $latitude == "" || $longitude == "" || $altitude == "" || $rythmeCardio == "" ) {
         $msg = "Erreur : donnees incompletes.";
         $code_reponse = 400;
     }else{
         // Verification l'authentification de l'utilisateur
         $utilisateur = $dao->getUnUtilisateur($pseudo);
-        if($utilisateur == null || $utilisateur->getPseudo() != $pseudo || $utilisateur->getMdpSha1() != $mdp || $dao->getNiveauConnexion($pseudo, $mdp) == 0 ){
+        if($dao->getNiveauConnexion($pseudo, $mdp) != 1 ){
             $msg = "Erreur : authentification incorrecte.";
             $code_reponse = 401;
         }else{
