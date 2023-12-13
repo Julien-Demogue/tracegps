@@ -43,21 +43,21 @@ if ($this->getMethodeRequete() != "GET")
 }
 else {
     // Verification que les donnees transmises sont completes
-    if ( $pseudo == "" || $mdp == "" || $pseudoDestinataire == "" || $lang == "" ) {
+    if ( $pseudo == "" || $mdp == "" || $pseudoDestinataire == "" || $texteMessage == "" || $nomPrenom == "") {
         $msg = "Erreur : donnees incompletes.";
         $code_reponse = 400;
     }
     else {
         // Verification l'authentification de l'utilisateur demandeur
         $utilisateur = $dao->getUnUtilisateur($pseudo);
-        if($utilisateur == null || $utilisateur->getPseudo() != $pseudo || $utilisateur->getMdpSha1() != $mdp || $dao->getNiveauConnexion($pseudo, $mdp) == 0 ){
+        if($dao->getNiveauConnexion($pseudo, $mdp) != 1 ){
             $msg = "Erreur : authentification incorrecte.";
             $code_reponse = 401;
         }        
         else {
             // Verification que le pseudo de l'utilisateur destinataire existe
             if  ($dao->existePseudoUtilisateur($pseudoDestinataire) != true) {
-                $msg = 'Erreur : pseudo utilisateur inexistant';
+                $msg = 'Erreur : pseudo utilisateur inexistant.';
                 $code_reponse = 402;
             }
             else {
