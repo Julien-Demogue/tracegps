@@ -45,19 +45,19 @@ if ($this->getMethodeRequete() != "GET")
 }
 else {
     // Verification que les donnees transmises sont completes
-    if ( $pseudo == "" || $mdp == "" || $pseudoARetirer == "" || $lang == "" ) {
+    if ( $pseudo == "" || $mdp == "" || $pseudoARetirer == ""||$lang == "" ) {
         $msg = "Erreur : donnees incompletes.";
         $code_reponse = 400;
     }else{
         // Verification l'authentification de l'utilisateur demandeur
         $utilisateur = $dao->getUnUtilisateur($pseudo);
-        if($utilisateur == null || $utilisateur->getPseudo() != $pseudo || $utilisateur->getMdpSha1() != $mdp || $dao->getNiveauConnexion($pseudo, $mdp) == 0 ){
+        if($dao->getNiveauConnexion($pseudo, $mdp) != 1 ){
             $msg = "Erreur : authentification incorrecte.";
             $code_reponse = 401;
         }else{
             //Vérification de l'existence du pseudo de l'utilisateur à qui on désire supprimer l'autorisation
             if  ($dao->existePseudoUtilisateur($pseudoARetirer) != true) {
-                $msg = 'Erreur : pseudo utilisateur inexistant';
+                $msg = 'Erreur : pseudo utilisateur inexistant.';
                 $code_reponse = 402;
             }else{
                 //Vérification que l'autorisation à retirer était bien accordée
@@ -93,7 +93,7 @@ else {
                             $msg = "Erreur : l'envoi du courriel de demande d\'autorisation a rencontre un probleme";
                             $code_reponse = 500;
                         }else{
-                            $msg = $pseudoARetirer . " va recevoir un courriel avec votre demande.";
+                            $msg = "Autorisation supprimée ; " . $pseudoARetirer . " va recevoir un courriel avec votre demande.";
                             $code_reponse = 200;
                         }
                     }
