@@ -103,17 +103,20 @@ function creerFluxXML($msg,$trace)
     // place l'élément 'reponse' dans l'élément 'data'
     $elt_reponse = $elt_reponse = $doc->createElement('reponse', $msg);
     $elt_data->appendChild($elt_reponse);
-    
+
+ if($trace != null){
     // ajouter les parametres de la trace
     $elt_trace = $doc->createElement('trace');
     $elt_id = $doc->createElement('id',$trace->getId());                                  $elt_trace->appendChild($elt_id);
     $elt_dateHDebut = $doc->createElement('dateHeureDebut',$trace->getDateHeureDebut());  $elt_trace->appendChild($elt_dateHDebut);
     $elt_terminee = $doc->createElement('terminee',$trace->getTerminee());                $elt_trace->appendChild($elt_terminee);
     $elt_idUtilisateur = $doc->createElement('idUtilisateur',$trace->getIdUtilisateur()); $elt_trace->appendChild($elt_idUtilisateur);
-    
+    $elt_donnees->appendChild($elt_trace);
+ }
+ 
     // place l'element 'donnees' dans l'element 'data'
     $elt_donnees = $doc->createElement('donnees');
-    $elt_donnees->appendChild($elt_trace);
+    
     $elt_data->appendChild($elt_donnees);
     
     // Mise en forme finale
@@ -137,6 +140,7 @@ function creerFluxJSON($msg,$trace)
      */
     
     // construction des donnees de la trace
+    if($trace != null){
     $elt_trace = ["trace" => [
         "id" => $trace->getId(),
         "dateHeureDebut" => $trace->getDateHeureDebut(),
@@ -146,7 +150,8 @@ function creerFluxJSON($msg,$trace)
     ];
     
     // construction de l'élément "data" et "donnees"
-    $elt_data = ["reponse" => $msg, "donnees" => $elt_trace];
+    $elt_data = ["reponse" => $msg, "donnees" => $elt_trace];}
+    else{$elt_data = ["reponse" => $msg];}
     
     // construction de la racine
     $elt_racine = ["data" => $elt_data];
