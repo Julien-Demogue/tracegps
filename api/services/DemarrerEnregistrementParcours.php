@@ -103,6 +103,7 @@ function creerFluxXML($msg,$trace)
     // place l'élément 'reponse' dans l'élément 'data'
     $elt_reponse = $elt_reponse = $doc->createElement('reponse', $msg);
     $elt_data->appendChild($elt_reponse);
+     $elt_donnees = $doc->createElement('donnees');
 
  if($trace != null){
     // ajouter les parametres de la trace
@@ -115,7 +116,7 @@ function creerFluxXML($msg,$trace)
  }
  
     // place l'element 'donnees' dans l'element 'data'
-    $elt_donnees = $doc->createElement('donnees');
+    
     
     $elt_data->appendChild($elt_donnees);
     
