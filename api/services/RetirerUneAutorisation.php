@@ -45,7 +45,7 @@ if ($this->getMethodeRequete() != "GET")
 }
 else {
     // Verification que les donnees transmises sont completes
-    if ( $pseudo == "" || $mdp == "" || $pseudoARetirer == ""||$lang == "" ) {
+    if ( $pseudo == "" || $mdp == "" || $pseudoARetirer == "") {
         $msg = "Erreur : donnees incompletes.";
         $code_reponse = 400;
     }else{
