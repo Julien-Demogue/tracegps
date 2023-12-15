@@ -33,12 +33,14 @@ else{
     if ( $pseudo == "" || $mdp == ""){
         $msg = "Erreur : donnees incompletes.";
         $code_reponse = 400;
+        $uneTrace=null;
     }
     else{
         // il faut être utilisateur pour demarrer un enregistrement
         if ( $dao->getNiveauConnexion($pseudo, $mdp) != 1 ){
             $msg = "Erreur : authentification incorrecte.";
             $code_reponse = 401;
+            $uneTrace=null;
         }
         else{
             // Creer une nouvelle Trace
