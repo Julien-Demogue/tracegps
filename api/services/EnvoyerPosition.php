@@ -62,7 +62,7 @@ else {
         }else{
             //Vérification de l'existence du numero de trace
             if  ($dao->getUneTrace($idTrace) == null) {
-                $msg = 'Erreur : le numero de trace n\'existe pas';
+                $msg = 'Erreur : le numero de trace n\'existe pas.';
                 $code_reponse = 402;
             }else{
                 $ok = false;
