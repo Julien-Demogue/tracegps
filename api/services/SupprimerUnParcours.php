@@ -66,7 +66,7 @@ else {
                     }
                     else {
                         // tout a fonctionné
-                        $msg = "Parcours supprime";
+                        $msg = "Parcours supprime.";
                         $code_reponse = 200;
                     }
                 }
