@@ -1,2 +1,2 @@
 # tracegps
-Projet lors du BTS SIO visant à créer une application de tracage de parcours gps.
+Projet réalisé lors du BTS SIO, visant à créer une application de traçage de parcours GPS.
