@@ -644,7 +644,7 @@ class DAO
         
         if ($unPointDeTrace->getId() == 1) {
             // Update the trace's start date with the point's date
-            $txt_trace = "UPDATE tracegps_traces SET dateDebut = :dateDebut WHERE idTrace = :idTrace";
+            $txt_trace = "UPDATE tracegps_traces SET dateDebut = :dateDebut WHERE id = :idTrace";
             $req2 = $this->cnx->prepare($txt_trace);
             $req2 -> bindvalue ('idTrace',$unPointDeTrace ->getIdTrace(),\PDO::PARAM_INT);
             $req2 -> bindvalue ('dateDebut',mb_convert_encoding($unPointDeTrace->getDateHeure(),"UTF-8"),\PDO::PARAM_STR);
