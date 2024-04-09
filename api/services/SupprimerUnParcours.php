@@ -10,9 +10,9 @@
 //      idTrace : l'id de la trace à supprimer
 //      lang : le langage utilisé pour le flux de donnees ("xml" ou "json")
 //  Le service retourne un flux de donnees XML ou JSON contenant un compte-rendu d'execution
-namespace api;
-use modele\DAO;
-use DOMDocument;
+
+include_once("../modele/DAO.class.php");
+
 // connexion du serveur web à la base MySQL
 $dao = new DAO();
 

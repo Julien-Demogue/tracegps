@@ -15,12 +15,10 @@
 //     http://<hébergeur>/tracegps/api/CreerUnUtilisateur?pseudo=turlututu&adrMail=delasalle.sio.eleves@gmail.com&numTel=1122334455&lang=xml
 
 // connexion du serveur web à la base MySQL
-namespace api;
 
-use modele\Outils;
-use modele\DAO;
-use modele\Utilisateur;
-use DOMDocument;
+
+include_once("../modele/Outils.class.php");
+include_once("../modele/Utilisateur.php");
 
 $dao = new DAO();
 

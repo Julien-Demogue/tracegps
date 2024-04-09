@@ -1,8 +1,6 @@
 <?php
 
-namespace api\services;
-use modele\DAO;
-use DOMDocument;
+
 // connexion du serveur web a la base MySQL
 $dao = new DAO();
 // Recuperation des donnees transmises
@@ -41,6 +39,7 @@ else {
             $lUtilisateur=$dao->getUnUtilisateur($pseudo);
             $utilisateurConsulte=$dao->getUnUtilisateur($pseudoConsulte);
             $desUtilisateursAutorisant=$dao->getLesUtilisateursAutorisant($lUtilisateur->getId());
+            $desUtilisateursAutorisant[] = $lUtilisateur;
             foreach ($desUtilisateursAutorisant as $unUtilisateurAutorisant){
                 $code_reponse = 400;
             if ($unUtilisateurAutorisant->getId() == $utilisateurConsulte->getId())

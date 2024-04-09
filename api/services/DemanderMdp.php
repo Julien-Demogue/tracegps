@@ -1,9 +1,7 @@
 <?php
-namespace api;
-use modele\DAO;
-use DOMDocument;
-use modele\Outils;
-use modele\Utilisateur;
+
+include_once("../modele/Outils.class.php");
+include_once("../modele/Utilisateur.php");
 $dao = new DAO();
 
 $pseudo = ( empty($this->request['pseudo'])) ? "" : $this->request['pseudo'];

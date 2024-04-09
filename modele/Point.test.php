@@ -1,5 +1,4 @@
 <?php
-namespace modele;
 // Projet TraceGPS
 // fichier : modele/Point.test.php
 // Rôle : test de la classe Point.class.php

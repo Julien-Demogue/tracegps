@@ -3,9 +3,8 @@
 // Fichier : api/api.php
 // La classe Api hérite de la classe Rest (fichier api/rest.php)
 // Dernière mise à jour : 3/7/2021 par dP
-namespace api;
 include_once ("rest.php");
-include_once ('../modele/DAO.php');
+include_once ('../modele/DAO.class.php');
 
 class api extends rest
 {   

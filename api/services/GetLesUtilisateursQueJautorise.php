@@ -1,7 +1,6 @@
 <?php
-namespace api;
-use modele\DAO;
-use DOMDocument;
+
+
 // connexion du serveur web à la base MySQL
 $dao = new DAO();
 

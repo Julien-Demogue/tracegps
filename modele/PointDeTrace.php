@@ -1,5 +1,5 @@
 <?php
-namespace modele;
+// namespace modele;
 // Projet TraceGPS
 // fichier : modele/PointDeTrace.class.php
 // Rôle : la classe PointDeTrace représente un point de passage sur un parcours

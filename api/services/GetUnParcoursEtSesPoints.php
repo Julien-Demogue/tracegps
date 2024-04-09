@@ -1,11 +1,5 @@
 <?php
 
-
-
-
-namespace api\services;
-use modele\DAO;
-use DOMDocument;
 // connexion du serveur web a la base MySQL
 $dao = new DAO();
 // Recuperation des donnees transmises

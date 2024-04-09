@@ -1,5 +1,4 @@
 <?php
-namespace modele;
 // Projet TraceGPS
 // fichier : modele/Utilisateur.test.php
 // Rôle : test de la classe Utilisateur.class.php

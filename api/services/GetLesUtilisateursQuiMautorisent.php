@@ -11,9 +11,7 @@
 //      lang : le langage utilisé pour le flux de données ("xml" ou "json")
 //  Le service retourne un flux de donnees XML ou JSON contenant un compte-rendu d'execution
 
-namespace api;
-use modele\DAO;
-use DOMDocument;
+
 // connexion du serveur web à la base MySQL
 $dao = new DAO();
 

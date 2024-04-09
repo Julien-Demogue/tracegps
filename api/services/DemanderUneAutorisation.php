@@ -16,11 +16,9 @@
     • Envoyer un courriel à l'utilisateur destinataire
 */
 
-namespace api;
-use modele\DAO;
-use modele\Utilisateur;
-use modele\Outils;
-use DOMDocument;
+include_once("../modele/Utilisateur.php");
+include_once("../modele/Outils.class.php");
+
 
 // Connexion au serveur et à la base de donnees
 $dao = new DAO();

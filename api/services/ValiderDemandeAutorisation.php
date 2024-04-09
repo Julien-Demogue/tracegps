@@ -14,9 +14,8 @@
 
 // Les paramètres doivent être passés par la méthode GET :
 //     http://<hébergeur>/tracegps/api/ValiderDemandeAutorisation?a=13e3668bbee30b004380052b086457b014504b3e&b=oxygen&c=europa&d=1
-namespace api;
-use modele\Outils;
-use modele\DAO;
+include_once("../modele/Outils.class.php");
+
 // ces variables globales sont définies dans le fichier modele/parametres.php
 global $ADR_MAIL_EMETTEUR, $ADR_SERVICE_WEB;
 

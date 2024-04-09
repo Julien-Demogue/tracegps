@@ -3,7 +3,6 @@
 // Fichier : api/rest.php
 // La classe Rest est la classe mère de la classe Api (fichier api/api.php)
 // Dernière mise à jour : 5/7/2021 par dP
-namespace api;
 class rest {
     protected $codeReponse;        // statut de la réponse HTTP (code numérique à 3 chiffres)
     protected $contentType;        // indique le format de la réponse HTTP : "application/xml; charset=utf-8" ou "application/json; charset=utf-8"

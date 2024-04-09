@@ -13,10 +13,9 @@
 
 // Les paramètres doivent être passés par la méthode GET :
 //     http://<hébergeur>/tracegps/api/SupprimerUnUtilisateur?pseudo=admin&mdp=ff9fff929a1292db1c00e3142139b22ee4925177&pseudoAsupprimer=oxygen&lang=xml
-namespace api;
-use modele\Outils;
-use modele\DAO;
-use DOMDocument;
+
+include_once("../modele/Outils.class.php");
+
 // connexion du serveur web à la base MySQL
 $dao = new DAO();
 	

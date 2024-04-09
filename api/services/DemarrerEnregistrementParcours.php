@@ -9,10 +9,10 @@
 //      mdp : le mot de passe de l'utilisateur hashé en sha1
 //      lang : le langage utilisé pour le flux de données ("xml" ou "json")
 //  Le service retourne un flux de donnees XML ou JSON contenant un compte-rendu d'execution
-namespace api;
-use modele\DAO;
-use modele\Trace;
-use DOMDocument;
+
+include_once("../modele/Trace.php");
+include_once("../modele/Outils.class.php");
+
 // connexion du serveur web à la base MySQL
 $dao = new DAO();
 
